@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/task
+		http://www.springframework.org/schema/task/spring-task-4.3.xsd">
+
+	<task:annotation-driven/>
+
+	<context:annotation-config/>
+
+	<bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
+
+	<context:component-scan base-package="com.sunnet.org.vote.quartz"/>
+
+	<!-- 只扫描Controller注解(include-filter) -->
+	<context:component-scan base-package="com.sunnet"  use-default-filters="false">
+		<context:include-filter type="annotation"  expression="org.springframework.stereotype.Controller" />
+		<context:include-filter type="annotation"  expression="org.springframework.web.bind.annotation.ControllerAdvice" />
+	</context:component-scan>
+
+	<!-- 配置静态资源指定Web应用服务器的默认Servlet名称为default,需要在web.xml配置--> 
+	<mvc:default-servlet-handler default-servlet-name="default"/>
+	
+	<!-- 开启注解 并加载自定义转化器-->
+	<mvc:annotation-driven conversion-service="conversionService"/>
+	
+	<!-- 自定义转化器 -->
+	<bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+		<property name="converters">
+			<list>
+				<bean class="com.sunnet.framework.converter.DateConverter"/>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- 配置视图解析器 jsp -->
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/" />
+		<property name="suffix" value=".jsp" />
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+	</bean>
+	
+	<!-- 配置全局异常处理类(只认第1个配置的异常处理类) -->
+	<bean class="com.sunnet.framework.exception.ZinYunHandlerExceptionResolver"/>
+	
+	
+	<!-- 文件上传解析器 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">   
+          <!-- 文件上传最大尺寸设置为-1表示默认的无限制 -->
+          <property name="maxUploadSize"   value="2147483648"/>
+          <property name="defaultEncoding" value="UTF-8"/>
+          <property name="resolveLazily"   value="true"/>
+    </bean>
+
+    <!-- 允许跨域请求 -->
+    <mvc:cors>
+        <mvc:mapping path="/**" allowed-origins="*" allow-credentials="true" max-age="1800" allowed-methods="GET,POST,OPTIONS"/>
+    </mvc:cors>
+    
+    
+    <!-- 开启shiro的注解 -->
+	<aop:aspectj-autoproxy proxy-target-class="true"/> 
+	<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" depends-on="lifecycleBeanPostProcessor">  
+         <property name="proxyTargetClass" value="true" />   
+   	</bean>
+   	<bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">  
+        <property name="securityManager" ref="securityManager"/>  
+    </bean> 
+    
+    
+    <!-- 配置类似全局的拦截器 ,多个拦截器则顺序执行拦截 (1.统一日志拦截器,2.身份验证拦截器,3.权限校验拦截器),拦截url包括子-->
+    <mvc:interceptors>
+    	<mvc:interceptor>
+    		<mvc:mapping path="/**"/>
+    		<bean class="com.sunnet.framework.interceptor.LogerInterceptor"/>
+    	</mvc:interceptor>
+    	<mvc:interceptor>
+    		<mvc:mapping path="/**"/>
+    		<bean class="com.sunnet.org.system.interceptor.LoginInterceptor"/>
+    	</mvc:interceptor>
+    </mvc:interceptors>
+	
+</beans>

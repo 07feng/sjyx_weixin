@@ -1,0 +1,9 @@
+windows服务器:  39.108.216.108
+用户名：administrator
+密码 ： SJYX@123
+ 
+数据库 ：
+内网  ：rm-wz9sy836ybt016j4m.sqlserver.rds.aliyuncs.com
+外网  ：rm-wz9sy836ybt016j4mo.sqlserver.rds.aliyuncs.com
+用户名：sjyx_sz880
+密码  ： SJYX@qq880

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+	
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<property name="securityManager" ref="securityManager"/>
+	    <!--<property name="loginUrl" value="/login.jsp" />-->
+	    <!--<property name="successUrl" value="/index.jsp"/>-->
+	    <!--<property name="unauthorizedUrl" value="/unauthorized.jsp"/> -->
+	    <property name="filterChainDefinitions">
+	        <value>
+	       		/** =anon
+	            /admin/login = anon
+	            /admin/** = authc
+	        	/resources/**=anon
+	        	/pc/**=anon
+	        	/app/**=anon
+<!-- 	        	/ =anon -->
+<!-- 	        	/api/**=anon -->
+<!-- 	        	/upload/**=anon -->
+<!-- 	        	/img/**=anon -->
+<!-- 	        	/center/**=anon -->
+<!-- 	            /system/login=anon -->
+<!-- 	            /ueditor/jsp/**=anon -->
+	        </value>
+	    </property>
+	</bean>
+	
+	<!--<bean id="userRealm" class="com.sunnet.org.system.shiro.UserRealm"></bean>-->
+	
+	<bean id="cacheManager" class="org.apache.shiro.cache.MemoryConstrainedCacheManager"/>  
+	
+	<bean id="sessionManager" class="org.apache.shiro.web.session.mgt.ServletContainerSessionManager"></bean>
+	
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+	    <!--<property name="realm" ref="userRealm"/>-->
+	    <property name="cacheManager" ref="cacheManager"/>
+	    <property name="sessionManager" ref="sessionManager"/>
+	</bean>
+	
+	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+    
+</beans>
