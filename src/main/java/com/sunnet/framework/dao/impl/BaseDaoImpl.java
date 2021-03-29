@@ -1,19 +1,15 @@
 package com.sunnet.framework.dao.impl;
 
 import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.apache.poi.ss.formula.functions.T;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.sunnet.framework.dao.IBaseDao;
 import com.sunnet.framework.pagenation.PageBean;
